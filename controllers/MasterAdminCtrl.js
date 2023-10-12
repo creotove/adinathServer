@@ -4,24 +4,24 @@ const newUserModel = require("../models/newUserModel");
 
 const approveUser = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { uniqueId } = req.body;
 
-    const removeFromApproval = await ApprovalModel.findOneAndDelete({
-      unique: userId,
-    });
-    if (!removeFromApproval) {
-      return res.status(404).send({
-        success: false,
-        message: "User not found",
-      });
-    }
+    // const removeFromApproval = await ApprovalModel.findOneAndDelete({
+    //   uniqueId,
+    // });
+    // if (!removeFromApproval) {
+    //   return res.status(404).send({
+    //     success: false,
+    //     message: "User not found",
+    //   });
+    // }
 
     // Find the user in the database and update the status to "approved"
     const user = await newUserModel.findOneAndUpdate(
-      { unique: userId },
+      { uniqueId },
       { status: "approved" }
     );
-
+    user.save();
     if (!user) {
       return res.status(404).send({
         success: false,
@@ -234,42 +234,41 @@ const rejectCouponPurchase = async (req, res) => {
 // };
 
 const getUserForApproval = async (req, res) => {
-    try {
-      // Find all users with status 'pending' from the newUserModel
-      const pendingUsers = await newUserModel.find({ status: 'pending' });
-  
-      // Create an array to store the results
-      const usersWithTransactionInfo = [];
-  
-      // Loop through each pending user
-      for (const user of pendingUsers) {
-        // Find the corresponding ApprovalModel entry for the user
-        const approvalInfo = await ApprovalModel.findOne({ userId: user._id });
-        console.log(approvalInfo);
-  
-        // If an approvalInfo entry exists, add it to the result
-        if (approvalInfo) {
-          usersWithTransactionInfo.push({
-            name: user.name,
-            uniqueId: user.uniqueId,
-            role: user.role,
-            transactionId: approvalInfo.transactionId,
-            paid: approvalInfo.paid 
-          });
-        }
+  try {
+    // Find all users with status 'pending' from the newUserModel
+    const pendingUsers = await newUserModel.find({ status: "pending" });
+
+    // Create an array to store the results
+    const usersWithTransactionInfo = [];
+
+    // Loop through each pending user
+    for (const user of pendingUsers) {
+      // Find the corresponding ApprovalModel entry for the user
+      const approvalInfo = await ApprovalModel.findOne({ userId: user._id });
+      console.log(approvalInfo);
+
+      // If an approvalInfo entry exists, add it to the result
+      if (approvalInfo) {
+        usersWithTransactionInfo.push({
+          name: user.name,
+          uniqueId: user.uniqueId,
+          role: user.role,
+          transactionId: approvalInfo.transactionId,
+          paid: approvalInfo.paid,
+        });
       }
-       return res.status(200).send({
-        data : usersWithTransactionInfo,
-        success: true,
-        message : 'All User Fetched'
-    })
-  
-    } catch (error) {
-      // Handle errors here
-      console.error(error);
-      res.status(500).json({ error: 'Internal server error' });
     }
-  };
+    return res.status(200).send({
+      data: usersWithTransactionInfo,
+      success: true,
+      message: "All User Fetched",
+    });
+  } catch (error) {
+    // Handle errors here
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = {
   approveUser,
@@ -278,5 +277,3 @@ module.exports = {
   rejectCouponPurchase,
   getUserForApproval,
 };
-
-

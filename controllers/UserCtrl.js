@@ -363,8 +363,8 @@ const setAccountDetails = async (req, res) => {
     const { userId, accountNumber, bankName, accountHolderName, ifscCode } =
       req.body;
 
-    const duplicate = await AccountDetails.findOne({accountNumber})
-    if(duplicate){
+    const duplicate = await AccountDetails.findOne({ accountNumber });
+    if (duplicate) {
       return res.status(400).send({
         error: "Account Number already exists",
         success: false,
@@ -395,7 +395,7 @@ const setAccountDetails = async (req, res) => {
 const withdrawCommissionRequest = async (req, res) => {
   try {
     const { uniqueId, amount, bankName } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     const user = await newUserModel.findOne({ uniqueId });
     if (!user) {
       return res.status(404).send({
@@ -620,18 +620,17 @@ const authController = async (req, res) => {
   try {
     // return console.log(req.body);
     const user = await newUserModel.findById({ _id: req.body._id });
-    // user.password = undefined;
+    user.password = undefined;
     if (!user) {
       return res.status(200).send({
         message: "user not found in auth controller",
         success: false,
       });
-    } else {
-      res.status(200).send({
-        success: true,
-        data: user,
-      });
     }
+    return res.status(200).send({
+      success: true,
+      data: user,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send({

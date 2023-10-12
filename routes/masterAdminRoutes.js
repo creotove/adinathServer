@@ -5,10 +5,10 @@ const { approveUser, rejectUser, purchaseCouponNew, rejectCouponPurchase, getUse
 
 
 // Approve a user by ID
-router.patch('/approveUser/:uniqueId', approveUser);
+router.patch('/approveUser', approveUser);
 
 // Reject a user by ID
-router.patch('/rejectUser/:uniqueId', rejectUser);
+router.patch('/rejectUser', rejectUser);
 
 
 // Purchase a coupon Approval
