@@ -1,5 +1,6 @@
 const express = require('express')
 const morgan = require('morgan')
+const path = require('path');
 const dotenv = require("dotenv");
 const colors = require("colors");
 const connectDB = require("./config/db");
@@ -28,6 +29,10 @@ app.use("/api/v1/user", require("./routes/userRoutes"));
 app.use("/api/v1/masterAdmin", require("./routes/masterAdminRoutes"));
 app.use("/api/v1/admin", require("./routes/adminRoutes"));
 app.use("/api/v1/retailer", require("./routes/retailerRoutes"));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontEnd/build', 'index.html'));
+  });
 
 //port
 const port = process.env.PORT || 8080;
